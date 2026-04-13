@@ -1,0 +1,132 @@
+# Textile Store Billing System (Final Version with Payment)
+
+products = {
+    "k1": {"name": "Kids T-Shirt", "price": 300},
+    "k2": {"name": "Kids Jeans", "price": 500},
+    
+    "b1": {"name": "Boys Shirt", "price": 600},
+    "b2": {"name": "Boys Shorts", "price": 400},
+    
+    "m1": {"name": "Men T-Shirt", "price": 700},
+    "m2": {"name": "Men Jeans", "price": 1200},
+    "m3": {"name": "Men Hoodie", "price": 1500},
+    
+    "g1": {"name": "Girls Top", "price": 500},
+    "g2": {"name": "Girls Jeans", "price": 800},
+    "g3": {"name": "Girls Skirt", "price": 700},
+    
+    "w1": {"name": "Women Kurti", "price": 900},
+    "w2": {"name": "Women Saree", "price": 1500},
+    "w3": {"name": "Women Jeans", "price": 1100},
+}
+
+discount_codes = {
+    "save10": 10,
+    "save20": 20,
+    "save30": 30
+}
+
+cart = []
+
+def add_product():
+    code = input("Enter Product Code: ").lower()
+    
+    if code in products:
+        quantity = int(input("Enter Quantity: "))
+        
+        cart.append({
+            "name": products[code]["name"],
+            "price": products[code]["price"],
+            "quantity": quantity
+        })
+        
+        print("✅ Product added!\n")
+    else:
+        print("❌ Invalid code!\n")
+
+def generate_bill():
+    total = 0
+    
+    print("\n------ FINAL BILL ------")
+    print("Product\tQty\tPrice\tTotal")
+    
+    for item in cart:
+        item_total = item["price"] * item["quantity"]
+        total += item_total
+        
+        print(f"{item['name']}\t{item['quantity']}\t{item['price']}\t{item_total}")
+    
+    print("------------------------")
+    print(f"Total before discount: ₹{total}")
+    
+    # Auto discount
+    discount_percent = 0
+    
+    if total >= 5000:
+        discount_percent = 30
+    elif total >= 3000:
+        discount_percent = 20
+    elif total >= 1000:
+        discount_percent = 10
+    
+    # Discount code
+    code = input("Enter Discount Code (or press Enter): ").lower()
+    
+    if code in discount_codes:
+        discount_percent = max(discount_percent, discount_codes[code])
+        print(f"🎉 Discount Applied: {discount_percent}%")
+    
+    discount_amount = total * discount_percent / 100
+    final_amount = total - discount_amount
+    
+    print(f"Discount Amount: ₹{discount_amount}")
+    print(f"Final Payable: ₹{final_amount}")
+    print("------------------------")
+    
+    # PAYMENT SECTION
+    print("\n------ PAYMENT ------")
+    print("1. Cash")
+    print("2. Debit Card")
+    
+    payment_choice = input("Select Payment Method (1/2): ")
+    
+    if payment_choice == "1":
+        payment_mode = "Cash"
+    elif payment_choice == "2":
+        payment_mode = "Debit Card"
+    else:
+        print("Invalid choice! Defaulting to Cash.")
+        payment_mode = "Cash"
+    
+    confirm = input("Payment received? (yes/no): ").lower()
+    
+    if confirm == "yes":
+        print("\n✅ PAYMENT SUCCESSFUL")
+        print("Status: PAID")
+        print(f"Payment Mode: {payment_mode}")
+        print("Thank you for shopping! 🛍️")
+        exit()
+    else:
+        print("⚠ Payment pending!")
+
+# Main menu
+while True:
+    print("\n--- TEXTILE STORE MENU ---")
+    print("1. Add Product")
+    print("2. Generate Bill")
+    print("3. Exit")
+    
+    choice = input("Enter choice: ")
+    
+    if choice == "1":
+        add_product()
+    elif choice == "2":
+        if cart:
+            generate_bill()
+        else:
+            print("⚠ Cart is empty!")
+    elif choice == "3":
+        print("Thank you! Visit again 😊")
+        break
+    else:
+        print("Invalid choice!")
